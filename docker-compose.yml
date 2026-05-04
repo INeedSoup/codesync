@@ -1,0 +1,22 @@
+services:
+  server:
+    build:
+      context: ./server
+    container_name: codesync-server
+    environment:
+      PORT: 3000
+    expose:
+      - "3000"
+    restart: unless-stopped
+
+  client:
+    build:
+      context: ./client
+      args:
+        VITE_BACKEND_URL: ""
+    container_name: codesync-client
+    ports:
+      - "80:80"
+    depends_on:
+      - server
+    restart: unless-stopped
