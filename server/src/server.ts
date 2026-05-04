@@ -10,6 +10,7 @@ import path from "path"
 dotenv.config()
 
 const app = express()
+const PISTON_BASE_URL = "https://emkc.org/api/v2/piston"
 
 app.use(express.json())
 
@@ -269,6 +270,48 @@ app.get("/", (req: Request, res: Response) => {
 
 app.get("/health", (req: Request, res: Response) => {
 	res.status(200).json({ status: "ok" })
+})
+
+app.get("/api/piston/runtimes", async (req: Request, res: Response) => {
+	try {
+		const response = await fetch(`${PISTON_BASE_URL}/runtimes`)
+		const data = await response.json()
+
+		if (!response.ok) {
+			return res.status(response.status).json(data)
+		}
+
+		return res.status(200).json(data)
+	} catch (error) {
+		console.error("Failed to fetch runtimes from Piston", error)
+		return res.status(502).json({
+			error: "Failed to fetch supported runtimes",
+		})
+	}
+})
+
+app.post("/api/piston/execute", async (req: Request, res: Response) => {
+	try {
+		const response = await fetch(`${PISTON_BASE_URL}/execute`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(req.body),
+		})
+		const data = await response.json()
+
+		if (!response.ok) {
+			return res.status(response.status).json(data)
+		}
+
+		return res.status(200).json(data)
+	} catch (error) {
+		console.error("Failed to execute code via Piston", error)
+		return res.status(502).json({
+			error: "Failed to execute code",
+		})
+	}
 })
 
 server.listen(PORT, () => {

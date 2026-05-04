@@ -4,16 +4,22 @@ import useWindowDimensions from "@/hooks/useWindowDimensions"
 function GitHubCorner() {
     const { showGitHubCorner } = useSettings()
     const { width } = useWindowDimensions()
+    const isLocalhost =
+        window.location.hostname === "localhost" ||
+        window.location.hostname === "127.0.0.1"
 
     return (
         <a
-            href="https://github.com/codrrk08/CodeSync"
+            href="https://github.com/INeedSoup/codesync"
             className="github-corner"
             aria-label="View source on GitHub"
             target="_blank"
             rel="noreferrer"
             style={{
-                display: showGitHubCorner && width > 640 ? "block" : "none",
+                display:
+                    showGitHubCorner && isLocalhost && width > 640
+                        ? "block"
+                        : "none",
             }}
         >
             <svg
